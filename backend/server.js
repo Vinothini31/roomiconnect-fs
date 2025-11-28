@@ -16,7 +16,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173", // Vite dev server
   "http://localhost:3000", // CRA dev server
-  "https://roomiconnect-frontend.onrender.com" // Deployed frontend
+  "https://roomiconnect-fs.onrender.com" // Deployed frontend
 ];
 
 app.use(cors({
