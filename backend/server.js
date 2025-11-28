@@ -4,26 +4,46 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 // Import route modules
-import authRoutes from "./routes/auth.js";      // <-- add this
-import userRoutes from "./routes/user.js";      // for interests & matching later
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
 import roomRoutes from "./routes/room.js";
 
-
-
 dotenv.config();
+
 const app = express();
 
-app.use(cors());
-app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:5173", // Vite dev server
+  "http://localhost:3000", // CRA dev server
+  "https://roomiconnect-frontend.onrender.com" // Deployed frontend
+];
 
+app.use(cors({
+  origin: function(origin, callback) {
+    // allow requests with no origin (like Postman)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
+// Body parser
+app.use(express.json());
+
+// Static folder
+app.use("/uploads", express.static("uploads"));
 
 // Simple test route
 app.get("/", (req, res) => res.send("Backend is working ✅"));
 
 // Mount routes
-app.use("/api/auth", authRoutes);    // <-- this enables POST /api/auth/signup
-app.use("/api/users", userRoutes);   // optional for later features
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/rooms", roomRoutes);
 
 // Start server
